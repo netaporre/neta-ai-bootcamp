@@ -121,7 +121,28 @@ Done when:
 
 ---
 
-### 13. Customer Discovery & Source Links
+### 13. Technical Discovery & Gap Analysis
+
+**Repos reviewed**
+[List each repo reviewed with a brief note on relevance, or: "No repos provided."]
+
+**Documentation reviewed**
+[List each doc or Confluence page reviewed, or: "No documentation provided."]
+
+**Existing Code**
+[What relevant code already exists. Reference specific files, modules, or services.]
+
+**Existing Docs**
+[What is already documented and relevant to this feature.]
+
+**Gaps Identified**
+[What the feature requires that doesn't exist yet. Reference specific files or docs
+for each gap. Include: missing abstractions, absent test coverage, undocumented
+behaviour, and any contradictions with the proposed approach.]
+
+---
+
+### 14. Customer Discovery & Source Links
 
 **#external-rca-for-customer (Slack)**
 [Relevant posts with direct links, or: "No relevant feedback found."]
@@ -137,7 +158,7 @@ Done when:
 
 ---
 
-### 14. High Level Approach
+### 15. High Level Approach
 
 **Option A: [Name]**
 - Description: [What this approach involves]
@@ -151,7 +172,7 @@ Done when:
 
 ---
 
-### 15. User Interaction & Design
+### 16. User Interaction & Design
 
 [Links to Figma files, mockups, or design specs. If none exist yet, note that design
 is pending and list the key flows that need design coverage.]
@@ -161,7 +182,7 @@ is pending and list the key flows that need design coverage.]
 
 ---
 
-### 16. Analytics
+### 17. Analytics
 
 **Analytics Links**
 [Links to existing Mixpanel dashboards or BI reports relevant to this feature.

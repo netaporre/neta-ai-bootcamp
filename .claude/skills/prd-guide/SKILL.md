@@ -64,6 +64,15 @@ Ask:
 > "Who benefits from this? What do they care about, and how do they currently work
 > around the problem?"
 
+### Section 4 — Repos & Documentation
+
+Ask:
+> "Are there any relevant repos or documentation I should review before writing the PRD?
+> (e.g., GitHub repo URLs, Confluence pages, existing PRDs, API docs)"
+
+Accept multiple links. If the user says none, note that and skip Stage 2.5.
+If links are provided, store them as [REPOS_AND_DOCS].
+
 ---
 
 ## Stage 2 — Confirmation
@@ -78,7 +87,40 @@ Before writing anything, summarize your understanding of all three sections:
 >
 > Is this correct, or should I adjust anything before writing the PRD?"
 
-Do not proceed to Stage 3 until the user confirms.
+Do not proceed until the user confirms.
+
+---
+
+## Stage 2.5 — Technical Discovery (skip if no repos/docs provided)
+
+If [REPOS_AND_DOCS] is populated, run this stage before writing the PRD.
+
+### What to do
+
+1. **Review each repo:** Read the codebase structure, search for files and modules
+   relevant to the feature idea. Look for: existing implementations that overlap,
+   related services or APIs, data models that will be affected, test coverage in
+   the relevant area.
+
+2. **Review each documentation link:** Read Confluence pages, existing PRDs, API docs,
+   or any other linked material. Note what is already defined vs. what is missing.
+
+3. **Identify gaps:** Compare what exists in code and docs against what the feature
+   requires. Flag:
+   - Existing code that conflicts with or constrains the proposed approach
+   - Missing abstractions or services the feature will need
+   - Undocumented behaviour the PRD must account for
+   - Areas with no test coverage that the feature touches
+   - Contradictions between existing docs and the proposed feature
+
+### How findings feed into the PRD
+
+- **Gaps in code coverage** → add to Section 10 (Dependencies & Risks)
+- **Undocumented behaviour** → add to Section 5 (Assumptions) and Section 12 (Open Questions)
+- **Existing implementations that overlap** → inform Section 6 (Scope & Phasing) and Section 14 (High Level Approach)
+- **All findings** → populate Section 13 (Technical Discovery & Gap Analysis)
+
+Do not invent findings. If a repo is clean and well-covered in the relevant area, say so.
 
 ---
 
@@ -102,6 +144,12 @@ do not force a split.
 **Sections 7–11:** Generate from the interview answers and your analysis.
 For each section, show your reasoning — explain why something is flagged as optional
 or phased.
+
+**Section 13 — Technical Discovery & Gap Analysis:**
+Populate from Stage 2.5 findings. If no repos or docs were provided, write:
+"No repos or documentation were reviewed for this PRD."
+Group findings under: Existing Code, Existing Docs, and Gaps Identified.
+For each gap, reference the specific file, module, or doc where it was found.
 
 **Section 12 — Customer Discovery:**
 Search these sources before writing:
@@ -144,6 +192,8 @@ Cover: feature entry, key interactions, completion, and errors.
 8. Do not pad the scope — if the idea ships in one phase, do not force a split.
 9. Do not use vague metrics — every success metric must have a number or a measurable condition.
 10. Do not skip the confirmation step before writing.
+11. Do not invent code or documentation findings — if a repo or doc has nothing
+    relevant, say so explicitly.
 
 ---
 
