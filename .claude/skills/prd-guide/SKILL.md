@@ -73,6 +73,19 @@ Ask:
 Accept multiple links. If the user says none, note that and skip Stage 2.5.
 If links are provided, store them as [REPOS_AND_DOCS].
 
+### Section 5 — Product Area (for Mixpanel analysis)
+
+Ask:
+> "Is this feature related to a specific area of the ARENA360 UI? If yes, which product
+> and screen? (e.g., TRADE / Trading Floor, BPS / Analysis, DEFEND / Player Management,
+> BOOST / Coverage Matrix)"
+
+If the user identifies a UI area: store as [UI_AREA] with [PRODUCT] (e.g., `Trade360`)
+and [SCREEN] (e.g., `TradingFloor`). This triggers Stage 2.7.
+
+If the user says no, unsure, or the feature has no UI component: note that and skip
+Stage 2.7.
+
 ---
 
 ## Stage 2 — Confirmation
@@ -124,6 +137,70 @@ Do not invent findings. If a repo is clean and well-covered in the relevant area
 
 ---
 
+## Stage 2.7 — Behavioral Discovery (skip if no UI area identified)
+
+If [UI_AREA] is populated, run this stage before writing the PRD.
+
+### Context to load first
+
+Read `~/.claude/lsports-mixpanel/context/mixpanel-mapping.md` to understand:
+- The event naming convention and which product prefix maps to [PRODUCT]
+- The screen-level events that exist for [SCREEN]
+- Global and event-specific properties
+
+### What to query
+
+Use the Mixpanel MCP tools to run the following analysis on [PRODUCT].[SCREEN]:
+
+**Query 1 — Usage volume & trend**
+Use `Run-Query` (or `Get-Events` to identify events first) to find:
+- Total event count for [PRODUCT].[SCREEN].* events in the last 30 days
+- Compare to the prior 30 days — is usage growing, flat, or declining?
+- Use workspace `3740808` (Prod + Exclude LSports) for production user data
+
+**Query 2 — Engagement breakdown**
+- Which specific events in [PRODUCT].[SCREEN].* fire most often?
+- Which events have near-zero volume (hints at abandoned or broken flows)?
+- How many unique users are active in this area?
+
+**Query 3 — Error & friction signals**
+- Are there `ErrorToaster` events in this area? What's the error rate?
+- Are there filter or search events with low follow-through?
+
+**Query 4 — Related funnel (if applicable)**
+- If the feature idea changes a specific flow, look for drop-off between the
+  entry event and the completion event in that flow.
+
+### How findings feed into the PRD
+
+- **Usage volume + trend** → feed into Section 2 (Problem Statement) — quantify
+  how heavily this area is used and whether it's growing
+- **Low-volume events on important flows** → add to Section 10 (Dependencies & Risks)
+  as evidence of abandoned paths or low adoption
+- **Error rate** → add to Section 2 (Problem Statement) as current friction data
+- **Unique active users** → use as baseline for Section 3 (Goals & Success Metrics)
+- **All findings** → populate Section 14 (Customer Discovery) under a new
+  "Mixpanel — Behavioral Data" subsection
+- **Relevant existing Mixpanel dashboards found** → link in Section 17 (Analytics)
+
+### How to report during the interview
+
+After running queries, summarise to the user:
+
+> "Here's what I found in Mixpanel for [PRODUCT] / [SCREEN]:
+>
+> **Usage:** [volume, trend]
+> **Active users:** [count, period]
+> **Top interactions:** [top 3 events]
+> **Friction signals:** [errors, abandoned flows, or "none found"]
+>
+> I'll use this data to sharpen the Problem Statement and set metric baselines."
+
+Do not invent Mixpanel findings. If an area has no matching events, say so —
+it may mean the feature is entirely new territory with no existing instrumentation.
+
+---
+
 ## Stage 3 — PRD output
 
 Load `template.md` and produce the full PRD by filling in every section.
@@ -133,6 +210,12 @@ Follow these rules for each section:
 **Sections 1–4:** Fill from the confirmed interview answers.
 - Section 1 (Objective & User Statement): Derive from the problem and user answers —
   frame as "as a [role] / I want / so that".
+- Section 2 (Problem Statement): If Stage 2.7 ran, sharpen this section with the
+  Mixpanel usage volume, error rate, or drop-off data found. Cite the specific numbers
+  — do not just say "data shows low adoption".
+- Section 3 (Goals & Success Metrics): If Stage 2.7 ran, set Baseline values from
+  Mixpanel data (active users, error rate, funnel conversion). Targets should be
+  measurable deltas from these baselines.
 - Section 5 (Assumptions): List what must be true for the solution to work. Flag
   anything unverified from the interview answers.
 
@@ -158,9 +241,14 @@ Search these sources before writing:
 - #product-insights (Slack, ID: C0AGY2ZJYPP — recordings and highlights from customer conversations)
 - FeatureOS request board
 
-For each source: cite the channel/source name and link to the specific post or request
-where available. If no relevant feedback is found in a source, state that explicitly.
-Never paraphrase without attribution. Never invent feedback.
+Add a dedicated **"Mixpanel — Behavioral Data"** subsection using Stage 2.7 findings:
+- Report the usage volume, active user count, top events, and friction signals found
+- Cite the specific Mixpanel workspace and date range queried
+- If Stage 2.7 was skipped (no UI area), write: "No Mixpanel analysis run — feature has
+  no identified UI area."
+
+For all sources: cite the channel/source name and link where available. Never paraphrase
+without attribution. Never invent feedback or Mixpanel data.
 
 **Section 13 — High Level Approach:**
 Always generate two options with pros, cons, and trade-offs.
@@ -171,10 +259,16 @@ design coverage based on the functional requirements.
 
 **Section 15 — Analytics:**
 Provide two parts:
-1. Analytics Links — placeholder for Mixpanel/BI dashboards (mark as TBD post-launch)
-2. Instrumentation Plan — specific events and properties.
+1. Analytics Links — if Stage 2.7 found existing Mixpanel reports or dashboards
+   relevant to this area, link them here. Mark new dashboards as TBD post-launch.
+2. Instrumentation Plan — specific events and properties following the ARENA360
+   naming convention `{Product}.{Screen}.{Element}.{Action}`. Read
+   `~/.claude/lsports-mixpanel/context/mixpanel-mapping.md` for naming rules and
+   existing property patterns to reuse.
 Format: `Event: <event_name> | Properties: <prop_1>, <prop_2>, <prop_3>`
 Cover: feature entry, key interactions, completion, and errors.
+Do not repeat global super properties (env, version, source, platform, etc.) —
+those are sent automatically.
 
 ---
 
@@ -194,6 +288,11 @@ Cover: feature entry, key interactions, completion, and errors.
 10. Do not skip the confirmation step before writing.
 11. Do not invent code or documentation findings — if a repo or doc has nothing
     relevant, say so explicitly.
+12. Do not invent Mixpanel data — if a product area has no matching events or the
+    query returns no data, report that explicitly. It may mean the area is
+    uninstrumented, which is itself a useful finding.
+13. For Analytics instrumentation (Section 17), always follow the ARENA360 naming
+    convention from mixpanel-mapping.md — never invent a new naming pattern.
 
 ---
 
