@@ -29,7 +29,32 @@ Store the answer as [FEATURE IDEA]. Then ask:
 
 > "What's your role? (e.g., PM, engineer, designer, other)"
 
-Store the answer as [YOUR ROLE]. Then begin Stage 1.
+Store the answer as [YOUR ROLE].
+
+### Context Check (before Stage 1)
+
+Before starting the interview, assess the feature description and role for context
+gaps. Ask for missing context ONLY if it is genuinely needed to run the discovery
+stages well — not as a formality.
+
+Common gaps that block discovery:
+- Which product area or team owns this (if not clear from [FEATURE IDEA])
+- Whether any partial implementation already exists for this feature
+- Known hard constraints: API limits, platform restrictions, regulatory requirements,
+  dependencies on other in-flight work
+
+Rules:
+- Ask at most 2 context questions, grouped in a single message — not one at a time
+- Do not ask for things already stated in [FEATURE IDEA] or [YOUR ROLE]
+- If the feature idea provides enough context to begin: skip this step entirely
+  and go straight to Stage 1
+
+Example (only if needed):
+> "Before we start: two quick things I need to run the full analysis —
+> 1. Which product area owns this? (e.g., TRADE, DEFEND, BOOST, ENGAGE)
+> 2. Is there any related work already in progress I should be aware of?"
+
+Then begin Stage 1.
 
 ---
 
@@ -221,6 +246,71 @@ After running queries, summarise to the user:
 
 Do not invent Mixpanel findings. If an area has no matching events, say so —
 it may mean the feature is entirely new territory with no existing instrumentation.
+
+---
+
+## Stage 2.9 — Logical Validation (always runs)
+
+After all discovery stages complete (Stage 2, 2.5, 2.7) and before writing anything,
+review the full picture end-to-end. Check every collected piece of information against
+every other piece. This stage cannot be skipped.
+
+### What to validate
+
+**1. Problem ↔ Solution alignment**
+Does the proposed solution directly address the root problem stated in Section 1?
+If the solution solves a symptom rather than the cause, flag it.
+
+**2. Metrics ↔ Scope alignment**
+Are the success metrics in Section 3 achievable within the Phase 1 scope?
+If a metric requires Phase 2 capabilities to move, flag it.
+
+**3. Assumptions vs. evidence**
+Do the stated or implied assumptions hold up against what was found in Mixpanel,
+code, customer feedback, and repos? If behavioral data contradicts an assumption,
+flag it.
+
+**4. Flow completeness and edge cases**
+Walk through the proposed user flow step by step. Identify:
+- What happens when the user lacks permissions, tokens, or data?
+- What happens on error or timeout?
+- What happens on a first-time vs. returning user path?
+- What happens at edge-of-scale (0 items, 1 item, maximum items)?
+
+Any unhandled path is a gap to flag.
+
+**5. Dependency and phasing consistency**
+Does Phase 1 deliver standalone value without Phase 2? If Phase 1 only makes sense
+when Phase 2 exists, the phase split is wrong — flag it. Are all dependencies
+identified in Section 10 consistent with the proposed Phase 1 scope?
+
+**6. Gaps and contradictions**
+Is there anything in the customer feedback, technical discovery, or behavioral data
+that directly contradicts the proposed direction? Flag any contradiction explicitly.
+
+### Output format
+
+If one or more issues are found, present them before writing the PRD:
+
+> "Before I write the PRD, I need to flag some logical gaps:
+>
+> ❌ **Contradiction:** [What conflicts with what, and why it matters]
+> ❓ **Missing assumption:** [What needs to be declared for the solution to hold]
+> ⚠️ **Edge case not covered:** [Scenario and what should happen]
+> 🔗 **Dependency gap:** [What's required but not scoped or accounted for]
+> 🔄 **Metrics / scope mismatch:** [Which metric can't be hit within Phase 1 scope]
+>
+> Should we resolve these now, or should I document them as open questions in
+> Section 12 and continue writing?"
+
+Wait for the user's answer before proceeding. If the user resolves an issue,
+update your understanding before writing. If the user says to document and continue,
+add each issue to Section 12 (Open Questions) with urgency "Before build."
+
+If no issues are found:
+> "Logical validation passed — everything checks out end-to-end. Writing the PRD now."
+
+Then proceed to Stage 3.
 
 ---
 
@@ -473,6 +563,13 @@ those are sent automatically.
     "what breaks if we cut this?"
 18. For Section 16, generate the wireframe for the MVP / Phase 1 flow only. Do not
     wireframe future phases — mark those as TBD pending Figma.
+19. The Context Check is targeted — never ask more than 2 questions, never ask about
+    things already stated. If the feature idea provides enough context, skip the step
+    entirely without comment.
+20. Logical validation (Stage 2.9) is mandatory before writing Stage 3. Issues found
+    must either be resolved with the user in the conversation or documented as open
+    questions in Section 12 with urgency "Before build." Writing the PRD without
+    completing Stage 2.9 is a violation of this rule.
 
 ---
 
