@@ -335,9 +335,91 @@ Include Stage 2.7 findings here:
 **Section 13 — High Level Approach:**
 Always generate two options with pros, cons, and trade-offs.
 
-**Section 14 — User Interaction & Design:**
+**Section 16 — User Interaction & Design:**
 Note any Figma links if provided. If none exist, list the key flows that will need
 design coverage based on the functional requirements.
+
+If the feature has a UI component (i.e., [UI_AREA] was identified or the feature
+touches a screen), generate an ASCII wireframe of the primary Phase 1 screen or
+flow. Rules for the wireframe:
+- Use box-drawing characters (┌ ─ ┐ │ └ ┘ ├ ┤) for layout structure
+- Label every key UI element: panels, buttons, fields, tabs, status indicators
+- Show the MVP state only — not future-phase additions
+- Focus on the core interaction the feature changes, not surrounding chrome
+- Keep it under 30 lines — clarity over completeness
+
+Example shape to adapt:
+```
+┌─────────────────────────────────────────┐
+│  Screen / Panel Title                   │
+├─────────────────────────────────────────┤
+│  [Label]  [Input field____________]     │
+│                                         │
+│  ┌─── Section ──────────────────────┐  │
+│  │  Row item             [Action]   │  │
+│  │  Row item             [Action]   │  │
+│  └──────────────────────────────────┘  │
+│                                         │
+│  [Primary CTA]        [Secondary]       │
+└─────────────────────────────────────────┘
+```
+
+If the feature has no UI component: write "Not applicable — no UI component."
+
+**Section 18 — Process Flow Diagram:**
+Scan the feature idea, functional requirements, and user stories for any process
+that has multiple steps, conditional branches, or more than one actor. Visualizable
+flows include: user journeys with decisions, configuration wizards, approval flows,
+system triggers and outcomes, onboarding sequences.
+
+If a flow is found:
+1. Write the Mermaid diagram code. Use `flowchart TD` for user flows (top-down),
+   `flowchart LR` for system or pipeline flows (left-right).
+2. Cover the Phase 1 happy path plus the 2–3 most important decision branches.
+   Keep it under 12 nodes — if the flow is complex, diagram the core loop only
+   and add a note explaining what is out of scope.
+3. Call `validate_and_render_mermaid_diagram` with the diagram code to render it
+   as an interactive widget. Always render — do not output raw Mermaid code only.
+
+Example structure:
+```
+flowchart TD
+    A[User enters feature] --> B{Condition?}
+    B -- Yes --> C[Step A]
+    B -- No  --> D[Step B]
+    C --> E[Outcome]
+    D --> E
+```
+
+If no multi-step flow is identified: write "No multi-step flow identified for
+this feature."
+
+**Section 19 — Development Plan:**
+Produce all five parts. This section is the detailed companion to the Section 6
+phasing summary — do not repeat Section 6 verbatim; go deeper here.
+
+1. **MVP Scope**: List the minimum set of capabilities that delivers the core user
+   value. Use [FLOW_PRIORITY_RANKING] from Stage 2.7 if available to anchor the
+   boundary. If no behavioral data: anchor on the single most direct path to the
+   user need stated in Section 1.
+
+2. **Minimalism Check** (mandatory when there is a phase split): For every MVP
+   item, answer "What breaks if we cut this?" Only items where the answer is
+   "the core value proposition fails" belong in MVP. If something can still work
+   without an item — even in a degraded way — it is a Phase 2 candidate. Present
+   this as a table: MVP Item | Core need it serves | What breaks if we cut it? | Verdict.
+
+3. **Future Phases**: For each deferred item, explain what it unlocks for the user
+   and why deferring it is safe. Do not list items without a rationale.
+
+4. **Customer Value by Phase**: Write what each phase delivers from the user's
+   perspective. Not a feature list — one sentence per phase stating what the user
+   can now do that they couldn't before.
+
+5. **Development Effort & Tradeoffs**: Identify 2–4 key technical decisions that
+   affect scope or architecture. Present each as Option A vs Option B with a
+   recommendation and a one-sentence reason. Do not write a sprint plan or
+   estimate story points.
 
 **Section 15 — Analytics:**
 Provide two parts:
@@ -383,6 +465,14 @@ those are sent automatically.
 15. Always run the ext- channel discovery step before writing Section 14. Do not skip
     it on the assumption that there are no relevant channels — always check. If
     slack_search_channels returns no ext- channels, note that explicitly.
+16. For Section 18, always call validate_and_render_mermaid_diagram to render the
+    flowchart as an interactive widget. Do not output raw Mermaid code without
+    rendering it — if the render fails, output the code and note the failure.
+17. The minimalism check in Section 19 is mandatory whenever there is a Phase 1 /
+    Phase 2 split. Never skip it. Every MVP item must have a written answer to
+    "what breaks if we cut this?"
+18. For Section 16, generate the wireframe for the MVP / Phase 1 flow only. Do not
+    wireframe future phases — mark those as TBD pending Figma.
 
 ---
 

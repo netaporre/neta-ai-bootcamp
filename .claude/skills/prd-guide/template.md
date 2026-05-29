@@ -153,8 +153,17 @@ behaviour, and any contradictions with the proposed approach.]
 **#product-insights (Slack)**
 [Relevant highlights or recordings with direct links, or: "No relevant feedback found."]
 
+**External customer channels (ext-*)**
+[Relevant messages with channel name, timestamp, and direct quote.
+Or: "No relevant posts found in ext- channels."]
+
 **FeatureOS**
 [Relevant requests with direct links, or: "No relevant requests found."]
+
+**Mixpanel — Behavioral Data**
+[Usage volume, active user count, top events, and friction signals from Stage 2.7.
+Cite workspace (3740808 — Prod) and date range queried.
+Or: "No Mixpanel analysis run — no UI area identified."]
 
 ---
 
@@ -174,11 +183,12 @@ behaviour, and any contradictions with the proposed approach.]
 
 ### 16. User Interaction & Design
 
-[Links to Figma files, mockups, or design specs. If none exist yet, note that design
-is pending and list the key flows that need design coverage.]
-
 - Figma: [link or "TBD"]
 - Key flows requiring design: [list]
+
+**Wireframe — MVP Flow** *(auto-generated; replace with Figma when ready)*
+
+[ASCII wireframe of the primary Phase 1 screen or flow. Or: "Not applicable — no UI component."]
 
 ---
 
@@ -198,3 +208,46 @@ Add after launch.]
 | `[key_interaction]` | `user_id`, `[prop]`, `[prop]` |
 | `feature_completed` | `user_id`, `duration_ms`, `outcome` |
 | `feature_error` | `user_id`, `error_type`, `step` |
+
+---
+
+### 18. Process Flow Diagram
+
+[Mermaid flowchart of the primary user or system flow for Phase 1.
+Covers the happy path and key decision points.
+Or: "No multi-step flow identified for this feature."]
+
+---
+
+### 19. Development Plan
+
+**MVP Scope**
+[The minimum set of capabilities that delivers the core user value.
+Every item here survived the minimalism check below.]
+
+**Minimalism Check**
+
+| MVP Item | Core need it serves | What breaks if we cut it? | Verdict |
+|----------|--------------------|--------------------------:|---------|
+|          |                    |                           | Keep / Cut |
+
+**Future Phases**
+
+| Item | Phase | Why deferred | What it unlocks for users |
+|------|-------|--------------|--------------------------|
+|      |       |              |                          |
+
+**Customer Value by Phase**
+
+- **Phase 1:** [What the user can now do that they couldn't before — written from
+  the user's perspective, not as a feature list.]
+- **Phase 2:** [Additional capability unlocked.]
+
+**Development Effort & Tradeoffs**
+
+[2–4 key technical decisions that affect scope. Not a sprint plan — a guide for
+the engineering conversation.]
+
+| Decision | Option A | Option B | Recommended | Reason |
+|----------|----------|----------|-------------|--------|
+|          |          |          |             |        |
