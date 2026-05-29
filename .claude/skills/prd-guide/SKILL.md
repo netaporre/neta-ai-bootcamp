@@ -133,6 +133,24 @@ and [SCREEN] (e.g., `TradingFloor`). This triggers Stage 2.7.
 If the user says no, unsure, or the feature has no UI component: note that and skip
 Stage 2.7.
 
+### Section 6 — Relevant stakeholders (conditional)
+
+**Only ask this if the feature does NOT belong to TRADE, DEFEND, BOOST, or ENGAGE.**
+
+For customer-facing products (TRADE, DEFEND, BOOST, ENGAGE): stakeholders are already
+known (Sales, Customer Success, Support, Operations) — skip this question.
+
+For everything else (internal tools, data pipelines, platform features, infrastructure,
+back-office flows, etc.), ask:
+
+> "Who are the relevant stakeholders for this feature beyond Product and Engineering?
+> For example: data team, DevOps, finance, legal, marketing, internal operations,
+> specific engineering squads, security, compliance — whoever would have a meaningful
+> perspective on this."
+
+Accept a free-form answer. Store as [STAKEHOLDERS]. Use this list to determine which
+perspectives to generate in Section 20.
+
 ---
 
 ## Stage 2 — Confirmation
@@ -547,9 +565,19 @@ phasing summary — do not repeat Section 6 verbatim; go deeper here.
    estimate story points.
 
 **Section 20 — Cross-Functional Perspectives:**
-Always generate Product and Engineering perspectives. Add Sales, Customer Success,
-Support, and Operations perspectives when the feature is customer-facing — i.e., it
-touches TRADE, DEFEND, BOOST, or ENGAGE, or is visible to operators in any product UI.
+Always generate Product and Engineering perspectives.
+
+For the remaining perspectives, branch on feature type:
+
+**If the feature touches TRADE, DEFEND, BOOST, or ENGAGE (customer-facing):**
+Add Sales, Customer Success, Support, and Operations (when relevant). These
+stakeholders are standard for customer-facing products — do not ask the user.
+
+**If the feature is NOT in a customer-facing product:**
+Use [STAKEHOLDERS] collected in Stage 1 Section 6. Generate one perspective
+subsection per stakeholder named by the user. If [STAKEHOLDERS] is empty or was
+not collected, generate Product and Engineering only, and add a note:
+"Additional stakeholder perspectives not collected — revisit if scope expands."
 
 For each perspective, go beyond description — provide analysis. Surface the risks,
 trade-offs, and considerations a person in that role would raise in a planning meeting.
@@ -657,9 +685,11 @@ those are sent automatically.
     plain language, with a specific question to resolve it. Do not silently carry
     unresolved issues into the PRD.
 22. Section 20 (Cross-Functional Perspectives) is mandatory for all PRDs. Product and
-    Engineering are always included. Sales, Customer Success, and Support are included
-    for any feature that touches TRADE, DEFEND, BOOST, or ENGAGE. Operations is included
-    when the feature has deployment, monitoring, or on-call implications.
+    Engineering are always included. For customer-facing features (TRADE, DEFEND, BOOST,
+    ENGAGE): Sales, Customer Success, and Support are always added; Operations when
+    relevant. For all other features: generate perspectives for the stakeholders named
+    in [STAKEHOLDERS]. If none were collected, generate Product and Engineering only
+    and note the gap — do not invent stakeholders.
 23. All PRD terminology must align with the existing system vocabulary found in GitBook
     and the codebase. Never invent new names for existing concepts. If GitBook was not
     reviewed, flag the terminology alignment as an open question before build.
