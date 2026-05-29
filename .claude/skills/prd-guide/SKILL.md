@@ -183,6 +183,25 @@ Use `Run-Query` (or `Get-Events` to identify events first) to find:
   "Mixpanel — Behavioral Data" subsection
 - **Relevant existing Mixpanel dashboards found** → link in Section 17 (Analytics)
 
+### Flow Priority Ranking — required output of this stage
+
+After running all queries, produce a ranked list of the user flows in [UI_AREA]
+ordered by behavioral importance. This ranking directly drives the Phase 1 / Phase 2
+split in Section 6.
+
+For each flow, assess:
+- **Volume:** how many events / unique users touch this flow per month?
+- **Criticality:** is it on the primary path (e.g., order placement) or secondary (e.g., export)?
+- **Friction:** does it have a high error rate or a visible funnel drop-off?
+- **Feature overlap:** does the proposed feature change this flow directly?
+
+Rank flows as:
+- **Priority 1 (Phase 1 candidate):** high volume + the feature directly touches it
+- **Priority 2 (Phase 2 candidate):** low volume, secondary path, or no friction signal
+- **Not in scope:** flow exists but the feature has no impact on it
+
+Store this ranking as [FLOW_PRIORITY_RANKING].
+
 ### How to report during the interview
 
 After running queries, summarise to the user:
@@ -194,7 +213,11 @@ After running queries, summarise to the user:
 > **Top interactions:** [top 3 events]
 > **Friction signals:** [errors, abandoned flows, or "none found"]
 >
-> I'll use this data to sharpen the Problem Statement and set metric baselines."
+> **Flow priority for phasing:**
+> - Phase 1: [flow A — reason], [flow B — reason]
+> - Phase 2: [flow C — reason]
+>
+> I'll use this to drive the phase split and explain the reasoning in the PRD."
 
 Do not invent Mixpanel findings. If an area has no matching events, say so —
 it may mean the feature is entirely new territory with no existing instrumentation.
@@ -221,12 +244,28 @@ Follow these rules for each section:
 
 **Section 6 — Scope & Phasing:**
 Analyze the feature idea and propose a Phase 1 / Phase 2 split.
-Explain your reasoning. If the idea is small enough to ship in one phase, say so —
-do not force a split.
+
+If Stage 2.7 ran and [FLOW_PRIORITY_RANKING] is available:
+- Phase 1 must contain the flows ranked Priority 1 — the highest-volume paths the
+  feature directly touches. The reasoning must cite the Mixpanel data: name the flow,
+  its event volume or active user count, and why that makes it the right starting point.
+- Phase 2 contains Priority 2 flows — lower-volume paths or secondary interactions.
+  Again, cite the data: explain why deferring these is safe given their lower usage.
+- Write the reasoning as prose inside the PRD, not as a footnote. Example:
+  "We start with the Trading Floor order flow because it accounts for 78% of daily
+  active sessions in this area (Mixpanel, last 30 days). The Export and Bulk Edit
+  flows are deferred to Phase 2 — they have <5% of event volume and no observed
+  error signal."
+
+If Stage 2.7 did not run: reason from the interview answers and feature complexity.
+Explain your reasoning either way. If the idea is small enough to ship in one phase,
+say so — do not force a split.
 
 **Sections 7–11:** Generate from the interview answers and your analysis.
 For each section, show your reasoning — explain why something is flagged as optional
-or phased.
+or phased. Wherever Mixpanel data informed the decision, write that explanation
+inline in the PRD body. Do not hide behavioral rationale in a footnote or data
+appendix — it belongs next to the decision it justifies.
 
 **Section 13 — Technical Discovery & Gap Analysis:**
 Populate from Stage 2.5 findings. If no repos or docs were provided, write:
@@ -276,7 +315,9 @@ those are sent automatically.
 
 1. Ask one section's questions at a time — never dump all questions at once.
 2. For sections 4–10, always show your reasoning: explain why you recommend a phase
-   split or flag something as optional.
+   split or flag something as optional. If behavioral data drove the decision, say so
+   with the specific number — not "data shows" but "Trading Floor accounts for 78%
+   of sessions, so it goes to Phase 1."
 3. For Customer Discovery, always cite the source and link — never paraphrase without
    attribution.
 4. For Analytics, define specific events and properties, not general categories.
@@ -293,6 +334,9 @@ those are sent automatically.
     uninstrumented, which is itself a useful finding.
 13. For Analytics instrumentation (Section 17), always follow the ARENA360 naming
     convention from mixpanel-mapping.md — never invent a new naming pattern.
+14. Never hide behavioral reasoning in a data appendix. Every Mixpanel-driven decision
+    (phase split, requirement priority, metric baseline, risk flag) must have its
+    explanation written inline, next to the decision — as prose, not as a table row.
 
 ---
 
