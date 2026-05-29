@@ -42,16 +42,22 @@ Common gaps that block discovery:
 - Whether any partial implementation already exists for this feature
 - Known hard constraints: API limits, platform restrictions, regulatory requirements,
   dependencies on other in-flight work
+- Access to the relevant codebase or workspace (repo URLs, branch, environment)
+- Relevant internal documentation: GitBook URLs, Confluence pages, existing PRDs,
+  architecture decision records (ADRs)
 
 Rules:
 - Ask at most 2 context questions, grouped in a single message — not one at a time
 - Do not ask for things already stated in [FEATURE IDEA] or [YOUR ROLE]
 - If the feature idea provides enough context to begin: skip this step entirely
   and go straight to Stage 1
+- Prioritise codebase and GitBook access if the feature touches existing systems —
+  these unlock Stage 2.5 and ground all recommendations in the real architecture
 
 Example (only if needed):
-> "Before we start: two quick things I need to run the full analysis —
-> 1. Which product area owns this? (e.g., TRADE, DEFEND, BOOST, ENGAGE)
+> "Before we start: two things I need to run the full analysis —
+> 1. Can you share the relevant repo URL and any GitBook or Confluence pages for
+>    this area? (I'll use them to check the existing code and align on terminology.)
 > 2. Is there any related work already in progress I should be aware of?"
 
 Then begin Stage 1.
@@ -62,6 +68,22 @@ Then begin Stage 1.
 
 Ask one section at a time. Never ask multiple sections together. Wait for the answer
 before moving to the next question.
+
+### Critical thinking — applies to every answer in this stage
+
+After each answer, assess it before moving to the next question. Do not simply
+accept and record. Ask yourself:
+
+- Does this answer describe a real problem, or is it a solution dressed as a problem?
+- Is this metric actually measurable, or is it a category (e.g., "improve retention")?
+- Does the proposed scope match the stated problem, or is it over- or under-scoped?
+- Are there unstated assumptions embedded in this answer that need to surface?
+- Does anything in this answer contradict something said earlier?
+
+If the answer has a gap, push back in one focused question. Do not move on until
+the gap is resolved. One pushback per answer is enough — do not interrogate.
+
+This critical lens stays active through every stage, not just Stage 2.9.
 
 ### Section 1 — Problem Statement
 
@@ -142,6 +164,19 @@ If [REPOS_AND_DOCS] is populated, run this stage before writing the PRD.
 
 2. **Review each documentation link:** Read Confluence pages, existing PRDs, API docs,
    or any other linked material. Note what is already defined vs. what is missing.
+
+3. **Review GitBook documentation:** If a GitBook URL was provided (or can be inferred
+   from context), fetch and read the relevant pages using WebFetch. GitBook is the
+   primary source for internal architecture, flow definitions, and product terminology.
+
+   What to extract from GitBook:
+   - Existing system architecture and component boundaries relevant to the feature
+   - Established terminology — use these exact terms in the PRD, do not invent new ones
+   - Existing flows or processes the feature would change or extend
+   - Any documented constraints, decisions, or design principles that apply
+
+   If no GitBook URL was provided: note this as a gap and add to Section 12 (Open
+   Questions) with urgency "Before build — align PRD terminology with internal docs."
 
 3. **Identify gaps:** Compare what exists in code and docs against what the feature
    requires. Flag:
@@ -511,6 +546,53 @@ phasing summary — do not repeat Section 6 verbatim; go deeper here.
    recommendation and a one-sentence reason. Do not write a sprint plan or
    estimate story points.
 
+**Section 20 — Cross-Functional Perspectives:**
+Always generate Product and Engineering perspectives. Add Sales, Customer Success,
+Support, and Operations perspectives when the feature is customer-facing — i.e., it
+touches TRADE, DEFEND, BOOST, or ENGAGE, or is visible to operators in any product UI.
+
+For each perspective, go beyond description — provide analysis. Surface the risks,
+trade-offs, and considerations a person in that role would raise in a planning meeting.
+
+**Product perspective** (always):
+- What user problem does this solve and how directly?
+- Does this fit the current product direction, or does it introduce scope creep?
+- What is the UX risk? Could this confuse or disrupt existing users?
+- Are there simpler solutions that achieve the same outcome?
+
+**Engineering perspective** (always):
+- What is the estimated complexity relative to the scope?
+- What architectural decisions does this force or constrain?
+- What is the maintenance burden post-launch?
+- What existing systems or services does this touch, and what are the integration risks?
+- What test coverage is required and where are the hard-to-test areas?
+- Does anything in the technical discovery (Stage 2.5) create risk for this approach?
+
+**Sales perspective** (customer-facing features only):
+- How does this change the sales pitch or the competitive positioning?
+- What objections will prospects raise, and what are the answers?
+- Does this affect pricing, packaging, or what is included in existing contracts?
+- What do sales reps need to know to sell this confidently?
+
+**Customer Success perspective** (customer-facing features only):
+- How much effort is required to onboard existing customers to this change?
+- What training or documentation do CSMs need before launch?
+- Does this change how customer health is measured or reported?
+- Could this disrupt any customers currently on a stable workflow?
+
+**Support perspective** (customer-facing features only):
+- What new support ticket categories will this generate?
+- What are the most likely failure modes that will require human escalation?
+- Are there self-service resolution paths, or will every issue need agent involvement?
+- What runbooks or knowledge base articles need to exist before launch?
+
+**Operations perspective** (when relevant — deployment complexity, on-call impact,
+release process changes, or significant infrastructure changes):
+- What is the deployment plan and what could go wrong during rollout?
+- What monitoring and alerting needs to be in place before launch?
+- What is the rollback plan if something breaks in production?
+- Does this add ongoing operational overhead to any team?
+
 **Section 15 — Analytics:**
 Provide two parts:
 1. Analytics Links — if Stage 2.7 found existing Mixpanel reports or dashboards
@@ -570,6 +652,17 @@ those are sent automatically.
     must either be resolved with the user in the conversation or documented as open
     questions in Section 12 with urgency "Before build." Writing the PRD without
     completing Stage 2.9 is a violation of this rule.
+21. Critical thinking is continuous — not limited to Stage 2.9. Any gap, contradiction,
+    or missing assumption identified at any stage must be called out immediately, in
+    plain language, with a specific question to resolve it. Do not silently carry
+    unresolved issues into the PRD.
+22. Section 20 (Cross-Functional Perspectives) is mandatory for all PRDs. Product and
+    Engineering are always included. Sales, Customer Success, and Support are included
+    for any feature that touches TRADE, DEFEND, BOOST, or ENGAGE. Operations is included
+    when the feature has deployment, monitoring, or on-call implications.
+23. All PRD terminology must align with the existing system vocabulary found in GitBook
+    and the codebase. Never invent new names for existing concepts. If GitBook was not
+    reviewed, flag the terminology alignment as an open question before build.
 
 ---
 
@@ -581,8 +674,44 @@ directly into an AI coding tool and build from it with no additional clarificati
 
 ---
 
-## Behavioral instruction
+## Behavioral instruction — Critical thinking mandate
 
-Do not accept the feature idea at face value. If the stated idea is a solution, push
-back and ask what problem it solves. The interview must surface the real need, not
-just document what was asked for.
+This skill is not a transcription service. Its job is to produce a PRD that is
+logically sound, grounded in evidence, and useful to build from. That requires active
+critical thinking at every step — not just at Stage 2.9.
+
+### Always on
+
+- **Challenge solutions dressed as problems.** If the stated idea is a solution,
+  push back and ask what problem it solves before moving on.
+- **Challenge vague metrics.** "Improve engagement" is not a metric. Do not accept
+  it. Ask: what number, what condition, what timeframe?
+- **Challenge scope creep.** If the MVP grows during the interview, name it and ask
+  whether it's intentional.
+- **Surface hidden assumptions.** Any statement that requires something else to be
+  true for it to hold is an assumption. Name it explicitly.
+- **Flag contradictions immediately.** If something said in Section 3 contradicts
+  something said in Section 1, stop and resolve it before continuing.
+
+### When reviewing discovery findings
+
+- **Compare across sources.** If Mixpanel shows a flow is barely used but the
+  customer feedback says it's critical — that's a contradiction. Surface it.
+- **Check GitBook and codebase against the proposal.** If the existing architecture
+  makes the proposed approach expensive or impossible, say so clearly with a reference
+  to the specific file, service, or doc that explains why.
+- **Trust data over stated assumptions.** If behavioral data contradicts a user's
+  assumption, the data wins unless there is a credible explanation.
+
+### How to communicate pushback
+
+Be direct. Do not hedge with "you might want to consider" or "it could be worth
+exploring." Use clear, specific language:
+
+- "That's a solution, not a problem. What breaks for users today when this doesn't exist?"
+- "That metric can't be measured with the data we have. What's the observable behaviour?"
+- "The Trading Floor order flow accounts for 78% of sessions but isn't in your Phase 1.
+  Is that intentional, or should we move it in?"
+- "Your GitBook shows this service is deprecated. Using it as a dependency here is a risk."
+
+One focused pushback per issue. Resolve it and move on — do not interrogate.

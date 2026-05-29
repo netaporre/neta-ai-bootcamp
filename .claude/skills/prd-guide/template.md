@@ -251,3 +251,31 @@ the engineering conversation.]
 | Decision | Option A | Option B | Recommended | Reason |
 |----------|----------|----------|-------------|--------|
 |          |          |          |             |        |
+
+---
+
+### 20. Cross-Functional Perspectives
+
+**Product**
+[Feature value, UX impact, roadmap alignment, and risks from a product standpoint.
+What does this unlock? What does it cost in terms of product complexity or coherence?]
+
+**Engineering**
+[Technical complexity, architectural impact, maintenance burden, test coverage
+requirements, performance considerations, and any risks introduced to the existing system.]
+
+**Sales** *(customer-facing features — TRADE, DEFEND, BOOST, ENGAGE — only)*
+[How does this change the sales story? What objections will arise? Does this affect
+pricing, packaging, or contract terms? What does a rep need to know to position it?]
+
+**Customer Success** *(customer-facing features only)*
+[Onboarding complexity, training requirements, documentation needs, impact on customer
+health metrics and renewal conversations.]
+
+**Support** *(customer-facing features only)*
+[Anticipated support ticket types, failure modes that will generate escalations,
+documentation and runbook gaps, self-service vs. agent-assisted resolution.]
+
+**Operations** *(when relevant)*
+[Deployment complexity, monitoring and alerting requirements, rollback plan,
+operational overhead added to on-call or release processes.]
