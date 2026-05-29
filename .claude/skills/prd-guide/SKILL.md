@@ -273,21 +273,64 @@ Populate from Stage 2.5 findings. If no repos or docs were provided, write:
 Group findings under: Existing Code, Existing Docs, and Gaps Identified.
 For each gap, reference the specific file, module, or doc where it was found.
 
-**Section 12 — Customer Discovery:**
-Search these sources before writing:
+**Section 14 — Customer Discovery:**
+Run all four source searches before writing. Never skip a source — if it returns
+nothing relevant, say so explicitly.
+
+**Source 1 — Internal feedback channels (always search these three):**
 - #external-rca-for-customer (Slack, ID: C08J153BMU0)
-- #voice-of-the-customers (Slack, ID: C05D4MYV162 — primary customer feedback channel)
-- #product-insights (Slack, ID: C0AGY2ZJYPP — recordings and highlights from customer conversations)
-- FeatureOS request board
+- #voice-of-the-customers (Slack, ID: C05D4MYV162)
+- #product-insights (Slack, ID: C0AGY2ZJYPP)
 
-Add a dedicated **"Mixpanel — Behavioral Data"** subsection using Stage 2.7 findings:
-- Report the usage volume, active user count, top events, and friction signals found
-- Cite the specific Mixpanel workspace and date range queried
-- If Stage 2.7 was skipped (no UI area), write: "No Mixpanel analysis run — feature has
-  no identified UI area."
+Use `slack_search_public_and_private` with the problem-area keywords for each channel.
+If a channel returns no results with narrow keywords, broaden the search terms once.
 
-For all sources: cite the channel/source name and link where available. Never paraphrase
-without attribution. Never invent feedback or Mixpanel data.
+**Source 2 — External customer channels (ext-*):**
+
+Step 1 — Discover which ext- channels exist:
+```
+slack_search_channels(query="ext-", channel_types="public_channel,private_channel", limit=20)
+```
+This returns all channels whose names contain "ext-". These are direct customer channels.
+
+Step 2 — Search for relevant content across all discovered ext- channels:
+Run `slack_search_public_and_private` with the core problem keywords. Do not
+filter by channel — let the search return results across all channel types, then
+identify which results come from ext- channels.
+
+Example query pattern:
+```
+slack_search_public_and_private(
+  query="[problem keyword 1] [problem keyword 2]",
+  channel_types="public_channel,private_channel",
+  sort="score"
+)
+```
+
+Step 3 — If the broad search returns ext- channel results, cite them.
+If the broad search returns no ext- results, re-run with broader synonyms
+or related terms from the problem statement. One retry is sufficient — do not
+loop more than twice.
+
+Step 4 — For each ext- channel result that is relevant:
+- Record the channel name, message timestamp, and direct quote
+- Note whether the message is a question, complaint, feature request, or workaround
+
+**Source 3 — FeatureOS request board:**
+Search for requests related to the feature area. Cite the specific request URL
+and upvote count where visible.
+
+**Reporting rules for all sources:**
+- Cite channel name and message link (or timestamp) for every finding
+- Quote directly — do not paraphrase without attribution
+- If a source has no relevant content: write "No relevant posts found in [source]"
+- Never invent feedback
+
+**Mixpanel — Behavioral Data subsection:**
+Include Stage 2.7 findings here:
+- Usage volume, active user count, top events, friction signals
+- Cite the Mixpanel workspace (3740808 — Prod) and date range queried
+- If Stage 2.7 was skipped: "No Mixpanel analysis run — no UI area identified."
 
 **Section 13 — High Level Approach:**
 Always generate two options with pros, cons, and trade-offs.
@@ -337,6 +380,9 @@ those are sent automatically.
 14. Never hide behavioral reasoning in a data appendix. Every Mixpanel-driven decision
     (phase split, requirement priority, metric baseline, risk flag) must have its
     explanation written inline, next to the decision — as prose, not as a table row.
+15. Always run the ext- channel discovery step before writing Section 14. Do not skip
+    it on the assumption that there are no relevant channels — always check. If
+    slack_search_channels returns no ext- channels, note that explicitly.
 
 ---
 
